@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Book Ticket for {{ movie.movie_name }}</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="date">Select Date:</label>
+            <select name="date" class="form-control" required>
+                {% for datetime in available_dates_times %}
+                    <option value="{{ datetime.date }}">{{ datetime.date }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group mt-4">
+            <label for="time">Select Time:</label>
+            <select name="time" class="form-control" required>
+                {% for datetime in available_dates_times %}
+                    <option value="{{ datetime.time }}">{{ datetime.time }}</option>
+                {% endfor %}
+            </select>
+        </div>
+<div class="container mt-5">
+    <h2>Reserve a Seat</h2>
+    <div class="seat-grid">
+        {% for seat, status in seat_status.items %}
+            <div class="seat-item">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="seat" value="{{ seat }}">
+                    <button type="submit" class="seat-button">
+                        <!-- Use if/else to set the correct image path -->
+                        {% if status == 'reserved' %}
+    <img src="{% static 'reservations/images/reserved_seat.png' %}" alt="Seat {{ seat }}" class="seat-image">
+{% else %}
+    <img src="{% static 'reservations/images/available_seat.png' %}" alt="Seat {{ seat }}" class="seat-image">
+{% endif %}
+
+                    </button>
+                </form>
+                <p>{{ seat }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+/* CSS for seat grid */
+.seat-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr); /* 10 seats per row */
+    gap: 15px;
+    justify-items: center;
+}
+.seat-item {
+    text-align: center;
+}
+.seat-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+.seat-image {
+    width: 50px;
+    height: 50px;
+}
+
+.form-check {
+    width: 80px; /* Adjust the size of the seat box */
+    margin: 10px;
+    text-align: center;
+}
+
+.checkbox-container {
+    display: flex;
+    flex-direction: column; /* Align checkbox vertically above the seat number */
+    justify-content: center;
+    align-items: center;
+}
+
+.seat-number-box {
+    background-color: #f1f1f1;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 5px; /* Space between checkbox and seat number */
+}
+
+.form-check-input {
+    margin-bottom: 5px; /* Space between checkbox and seat number box */
+}
+
+/* Ensure all seat checkboxes are aligned horizontally */
+.d-flex {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+</style>
+{% endblock %}
